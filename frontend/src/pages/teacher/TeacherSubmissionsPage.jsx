@@ -51,11 +51,12 @@ const TeacherSubmissionsPage = () => {
           </div>
         </div>
         <div className="mt-4 overflow-x-auto">
-          <table className="min-w-[820px] text-sm">
+          <table className="min-w-[980px] text-sm">
             <thead>
               <tr className="text-left text-slate-400">
                 <th className="py-2">Student</th>
                 <th className="py-2">Assignment</th>
+                <th className="py-2">File</th>
                 <th className="py-2">Version</th>
                 <th className="py-2">Status</th>
                 <th className="py-2">Similarity</th>
@@ -67,6 +68,12 @@ const TeacherSubmissionsPage = () => {
                 <tr key={row.id} className="border-b border-slate-200 hover:bg-slate-50">
                   <td className="py-2">{users.find((u) => u.id === row.studentId)?.name || "-"}</td>
                   <td className="py-2">{assignments.find((a) => a.id === row.assignmentId)?.title || "-"}</td>
+                  <td className="py-2">
+                    <div className="text-xs text-slate-600">
+                      <p>{row.fileOriginalName || row.fileUrl || "-"}</p>
+                      {row.fileSize ? <p className="text-slate-400">{Math.ceil(row.fileSize / 1024)} KB</p> : null}
+                    </div>
+                  </td>
                   <td className="py-2">
                     <span className="chip">v{row.versionNumber}</span>
                   </td>

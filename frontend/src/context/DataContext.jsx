@@ -169,7 +169,7 @@ export const DataProvider = ({ children }) => {
       );
   };
 
-  const submitAssignment = ({ assignmentId, studentId, fileName, content }) => {
+  const submitAssignment = ({ assignmentId, studentId, fileName, content, fileType, fileSize }) => {
     const assignment = assignments.find((a) => a.id === assignmentId);
     if (!assignment) throw new Error("Assignment not found.");
     const studentSubmissions = submissions.filter(
@@ -193,6 +193,9 @@ export const DataProvider = ({ children }) => {
       assignmentId,
       studentId,
       fileUrl: `uploads/${uid("file")}_${fileName}`,
+      fileOriginalName: fileName,
+      fileType: fileType || "application/octet-stream",
+      fileSize: fileSize || 0,
       submittedAt: submittedAt.toISOString(),
       status: isLate ? SUBMISSION_STATUS.LATE : SUBMISSION_STATUS.SUBMITTED,
       totalMarks: null,
@@ -356,6 +359,15 @@ export const DataProvider = ({ children }) => {
     setDepartments((prev) => [...prev, name.trim()]);
   };
 
+  const resetDemoData = () => {
+    setUsers(SEED_USERS);
+    setAssignments(SEED_ASSIGNMENTS);
+    setSubmissions(SEED_SUBMISSIONS);
+    setNotifications(SEED_NOTIFICATIONS);
+    setAuditLogs([]);
+    setDepartments(SEED_DEPARTMENTS);
+  };
+
   const value = useMemo(
     () => ({
       users,
@@ -377,7 +389,8 @@ export const DataProvider = ({ children }) => {
       markNotificationRead,
       runDeadlineReminderSweep,
       aiSuggestion,
-      addDepartment
+      addDepartment,
+      resetDemoData
     }),
     [users, assignments, submissions, notifications, auditLogs, departments]
   );

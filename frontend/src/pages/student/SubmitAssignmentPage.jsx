@@ -17,25 +17,54 @@ const SubmitAssignmentPage = () => {
     fileName: "",
     content: ""
   });
+  const [selectedFile, setSelectedFile] = useState(null);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+
+  const onFileChange = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) {
+      setSelectedFile(null);
+      setForm((s) => ({ ...s, fileName: "" }));
+      return;
+    }
+    setSelectedFile(file);
+    setForm((s) => ({ ...s, fileName: file.name }));
+
+    // Auto-fill content for plain text files to improve similarity check quality.
+    if (file.type.startsWith("text/")) {
+      try {
+        const text = await file.text();
+        setForm((s) => ({ ...s, content: text.slice(0, 10000) }));
+      } catch {
+        // Keep manual content entry if reading fails.
+      }
+    }
+  };
 
   const onSubmit = (e) => {
     e.preventDefault();
     setError("");
     setMessage("");
+    if (!selectedFile) {
+      setError("Please choose a file to upload.");
+      return;
+    }
     try {
       const submission = submitAssignment({
         assignmentId: form.assignmentId,
         studentId: currentUser.id,
         fileName: form.fileName,
-        content: form.content
+        content: form.content,
+        fileType: selectedFile.type,
+        fileSize: selectedFile.size
       });
       const flagged = submission.similarityScore > 60 ? " Potential plagiarism flagged." : "";
       setMessage(
         `Submitted successfully (Version ${submission.versionNumber}, Similarity ${submission.similarityScore}%).${flagged}`
       );
       setForm({ assignmentId: "", fileName: "", content: "" });
+      setSelectedFile(null);
     } catch (err) {
       setError(err.message);
     }
@@ -64,6 +93,21 @@ const SubmitAssignmentPage = () => {
           </select>
         </div>
         <div className="mt-3">
+          <label className="label">Upload File</label>
+          <input
+            className="input"
+            type="file"
+            accept=".pdf,.txt,.doc,.docx,.md"
+            onChange={onFileChange}
+            required
+          />
+          {selectedFile ? (
+            <p className="mt-2 text-xs text-slate-500">
+              Selected: {selectedFile.name} ({Math.ceil(selectedFile.size / 1024)} KB)
+            </p>
+          ) : null}
+        </div>
+        <div className="mt-3">
           <label className="label">File Name</label>
           <input
             className="input"
@@ -74,10 +118,9 @@ const SubmitAssignmentPage = () => {
           />
         </div>
         <div className="mt-3">
-          <label className="label">Extracted Text Content (for similarity check)</label>
+          <label className="label">Extracted Text Content (optional, used for similarity check)</label>
           <textarea
             className="input min-h-36"
-            required
             value={form.content}
             onChange={(e) => setForm((s) => ({ ...s, content: e.target.value }))}
           />
