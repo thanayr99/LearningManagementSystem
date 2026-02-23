@@ -1,0 +1,75 @@
+@import url("https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: "Sora", sans-serif;
+  color: #1f2347;
+  background:
+    radial-gradient(circle at 15% 12%, #ffffff 0%, #f7f7fb 35%, transparent 60%),
+    linear-gradient(90deg, #f7f7fb 0%, #f7f7fb 62%, #eeebff 62%, #eeebff 100%);
+  min-height: 100vh;
+}
+
+.card {
+  @apply rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-shadow hover:shadow-md;
+}
+
+.title-xl {
+  @apply text-[33px] font-semibold tracking-[-0.02em] text-[#1d1a46];
+}
+
+.section-title {
+  @apply text-base font-semibold text-[#2b2759];
+}
+
+.chip {
+  @apply inline-flex items-center rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-medium text-slate-600;
+}
+
+.panel-soft {
+  @apply rounded-2xl border border-slate-200 bg-slate-50/90 p-4;
+}
+
+.btn-primary {
+  @apply rounded-xl bg-[#22214e] px-4 py-2 font-medium text-white transition hover:bg-[#17163f] disabled:cursor-not-allowed disabled:opacity-50;
+}
+
+.btn-secondary {
+  @apply rounded-xl border border-slate-300 bg-white px-4 py-2 font-medium text-slate-700 transition hover:bg-slate-50;
+}
+
+.input {
+  @apply w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-800 outline-none ring-violet-200 transition placeholder:text-slate-400 focus:border-violet-400 focus:ring-2;
+}
+
+.label {
+  @apply mb-1 block text-sm font-medium text-slate-700;
+}
+
+.muted {
+  @apply text-slate-500;
+}
+
+.app-shell {
+  background:
+    radial-gradient(circle at 15% 12%, #ffffff 0%, #f7f7fb 35%, transparent 60%),
+    linear-gradient(90deg, #f7f7fb 0%, #f7f7fb 62%, #eeebff 62%, #eeebff 100%);
+}
+
+@media (max-width: 1279px) {
+  body,
+  .app-shell {
+    background: #f7f7fb;
+  }
+}
+
+table th {
+  @apply border-b border-slate-200 pb-2 font-medium text-slate-500;
+}
+
+table td {
+  @apply py-3 text-slate-700;
+}
