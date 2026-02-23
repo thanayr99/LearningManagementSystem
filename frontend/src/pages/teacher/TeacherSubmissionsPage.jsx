@@ -32,9 +32,9 @@ const TeacherSubmissionsPage = () => {
       <div className="card">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <h1 className="section-title">Submissions</h1>
-          <div className="flex gap-2">
+          <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
             <select
-              className="input w-72"
+              className="input w-full sm:w-72"
               value={selectedAssignment}
               onChange={(e) => setSelectedAssignment(e.target.value)}
             >
@@ -51,7 +51,7 @@ const TeacherSubmissionsPage = () => {
           </div>
         </div>
         <div className="mt-4 overflow-x-auto">
-          <table className="min-w-full text-sm">
+          <table className="min-w-[820px] text-sm">
             <thead>
               <tr className="text-left text-slate-400">
                 <th className="py-2">Student</th>

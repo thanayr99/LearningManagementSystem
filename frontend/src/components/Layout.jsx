@@ -16,13 +16,13 @@ const Layout = ({ children }) => {
   return (
     <div className="app-shell min-h-screen lg:flex">
       <Sidebar role={currentUser.role} />
-      <main className="flex-1 p-4 lg:p-7">
+      <main className="flex-1 p-3 sm:p-4 lg:p-7">
         <header className="mb-6 rounded-2xl border border-slate-200 bg-white p-5">
           <div className="mb-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
             <div className="w-full lg:max-w-sm">
               <input className="input" placeholder="Search here" />
             </div>
-            <div className="flex items-center gap-3 text-xs sm:text-sm">
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-xs sm:text-sm">
               <span className="chip">Light</span>
               <span className="chip">Alerts</span>
               <Link to="/profile" className="btn-secondary">
@@ -40,20 +40,20 @@ const Layout = ({ children }) => {
               {currentUser.role}
             </p>
           </div>
-          <div className="mt-4 flex flex-wrap items-center gap-5 border-t border-slate-200 pt-3">
+          <div className="mt-4 flex flex-wrap items-center gap-4 border-t border-slate-200 pt-3">
             <button className="text-sm text-slate-500">Overview</button>
             <button className="border-b-2 border-[#5e54d6] pb-1 text-sm font-semibold text-[#2b2759]">Boards</button>
             <button className="text-sm text-slate-500">Timeline</button>
             <button className="text-sm text-slate-500">Activities</button>
             <button className="text-sm text-slate-500">Files</button>
-            <div className="ml-auto flex items-center gap-3 text-sm text-slate-500">
+            <div className="ml-0 flex items-center gap-3 text-sm text-slate-500 sm:ml-auto">
               <span>Filter</span>
               <span>Sort</span>
             </div>
           </div>
         </header>
 
-        <div className="grid gap-5 xl:grid-cols-[2fr_1fr]">
+        <div className="grid gap-4 lg:gap-5 xl:grid-cols-[2fr_1fr]">
           <div>{children}</div>
           <aside className="space-y-4">
             <section className="rounded-2xl bg-gradient-to-r from-[#8f7cff] to-[#8b6df8] p-5 text-white shadow-sm">

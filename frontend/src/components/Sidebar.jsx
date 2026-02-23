@@ -31,17 +31,17 @@ const Sidebar = ({ role }) => {
   const links = roleMenus[role] || [];
   return (
     <aside className="w-full border-r border-slate-200 bg-white lg:h-screen lg:w-64">
-      <div className="border-b border-slate-200 px-5 py-5">
+      <div className="border-b border-slate-200 px-4 py-4 lg:px-5 lg:py-5">
         <h1 className="text-lg font-semibold text-[#5e54d6]">IAWES</h1>
         <p className="text-xs text-slate-500">Academic Workflow Platform</p>
       </div>
-      <nav className="p-3">
+      <nav className="grid grid-cols-2 gap-1 p-2 sm:grid-cols-3 lg:block lg:p-3">
         {links.map((item) => (
           <NavLink
             key={item.to}
             to={item.to}
             className={({ isActive }) =>
-              `mb-1 flex items-center gap-2 rounded-xl px-3 py-2 text-sm ${
+              `mb-0 flex items-center gap-2 rounded-xl px-3 py-2 text-xs sm:text-sm lg:mb-1 ${
                 isActive
                   ? "bg-[#ece9ff] text-[#2f2b66]"
                   : "text-slate-600 hover:bg-slate-100"

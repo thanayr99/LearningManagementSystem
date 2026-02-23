@@ -2,11 +2,11 @@ import { Link } from "react-router-dom";
 
 const LandingPage = () => {
   return (
-    <div className="relative min-h-screen overflow-hidden p-6 lg:p-10">
+    <div className="relative min-h-screen overflow-hidden p-4 sm:p-6 lg:p-10">
       <div className="absolute -left-20 top-10 h-72 w-72 rounded-full bg-violet-200 blur-3xl" />
       <div className="absolute -right-24 bottom-0 h-80 w-80 rounded-full bg-fuchsia-100 blur-3xl" />
 
-      <header className="relative z-10 mb-10 flex items-center justify-between">
+      <header className="relative z-10 mb-8 flex flex-col items-start justify-between gap-4 sm:mb-10 sm:flex-row sm:items-center">
         <div>
           <h1 className="text-2xl font-bold text-[#5e54d6]">IAWES</h1>
           <p className="muted text-sm">Intelligent Academic Workflow & Evaluation System</p>
@@ -21,10 +21,10 @@ const LandingPage = () => {
         </div>
       </header>
 
-      <main className="relative z-10 grid gap-6 lg:grid-cols-[1.4fr_1fr]">
+      <main className="relative z-10 grid gap-4 sm:gap-6 lg:grid-cols-[1.4fr_1fr]">
         <section className="card">
           <p className="text-sm uppercase tracking-widest text-[#6e63db]">Academic Workflow Platform</p>
-          <h2 className="mt-3 text-4xl font-bold leading-tight text-slate-800 lg:text-5xl">
+          <h2 className="mt-3 text-3xl font-bold leading-tight text-slate-800 sm:text-4xl lg:text-5xl">
             Assignment Submission and Intelligent Grading, End-to-End
           </h2>
           <p className="muted mt-4 max-w-2xl">

@@ -12,7 +12,7 @@ const StudentGradesPage = () => {
       <div className="card">
         <h1 className="section-title">My Grades & Submission History</h1>
         <div className="mt-4 overflow-x-auto">
-          <table className="min-w-full text-sm">
+          <table className="min-w-[760px] text-sm">
             <thead>
               <tr className="text-left text-slate-400">
                 <th className="py-2">Assignment</th>
