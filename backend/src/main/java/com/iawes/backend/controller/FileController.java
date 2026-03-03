@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import com.iawes.backend.service.SubmissionService;
+import lombok.RequiredArgsConstructor;
 
 import java.net.MalformedURLException;
 import java.nio.file.Path;
@@ -18,7 +20,9 @@ import java.nio.file.Paths;
 
 @RestController
 @RequestMapping("/api/files")
+@RequiredArgsConstructor
 public class FileController {
+    private final SubmissionService submissionService;
 
     @Value("${app.uploads.dir}")
     private String uploadDir;
@@ -26,6 +30,7 @@ public class FileController {
     @GetMapping("/{name}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Resource> file(@PathVariable String name) throws MalformedURLException {
+        submissionService.findByFilePathForAuthorizedUser("/api/files/" + name);
         Path path = Paths.get(uploadDir).resolve(name);
         Resource resource = new UrlResource(path.toUri());
         if (!resource.exists()) return ResponseEntity.notFound().build();

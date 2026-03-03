@@ -6,6 +6,7 @@ import com.iawes.backend.dto.submission.GradeSubmissionRequest;
 import com.iawes.backend.dto.submission.RubricScoreDto;
 import com.iawes.backend.dto.submission.SubmissionResponse;
 import com.iawes.backend.entity.*;
+import com.iawes.backend.entity.enums.Role;
 import com.iawes.backend.entity.enums.SubmissionStatus;
 import com.iawes.backend.exception.ApiException;
 import com.iawes.backend.repository.*;
@@ -17,7 +18,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -40,8 +40,14 @@ public class SubmissionService {
     @Transactional
     public SubmissionResponse submit(Long assignmentId, MultipartFile file, String contentText) {
         User student = currentUserService.getCurrentUser();
+        if (student.getRole() != Role.ROLE_STUDENT) {
+            throw new ApiException(HttpStatus.FORBIDDEN, "Only students can submit assignments.");
+        }
         Assignment assignment = assignmentRepository.findById(assignmentId)
                 .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Assignment not found."));
+        if (assignment.getStatus().name().equals("CLOSED")) {
+            throw new ApiException(HttpStatus.BAD_REQUEST, "Assignment is closed.");
+        }
         String fileUrl = fileStorageService.save(file);
         String extracted = plagiarismService.extractText(file, contentText);
 
@@ -80,8 +86,15 @@ public class SubmissionService {
     }
 
     public List<SubmissionResponse> assignmentSubmissions(Long assignmentId) {
+        User actor = currentUserService.getCurrentUser();
         Assignment assignment = assignmentRepository.findById(assignmentId)
                 .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Assignment not found."));
+        boolean allowed = actor.getRole() == Role.ROLE_SUPER_ADMIN
+                || actor.getRole() == Role.ROLE_TA
+                || assignment.getCreatedBy().getId().equals(actor.getId());
+        if (!allowed) {
+            throw new ApiException(HttpStatus.FORBIDDEN, "Not allowed to view submissions for this assignment.");
+        }
         return submissionRepository.findByAssignmentOrderBySubmittedAtDesc(assignment).stream().map(this::toResponse).toList();
     }
 
@@ -91,6 +104,12 @@ public class SubmissionService {
         Submission submission = submissionRepository.findById(submissionId)
                 .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Submission not found."));
         Assignment assignment = submission.getAssignment();
+        boolean allowed = grader.getRole() == Role.ROLE_SUPER_ADMIN
+                || grader.getRole() == Role.ROLE_TA
+                || assignment.getCreatedBy().getId().equals(grader.getId());
+        if (!allowed) {
+            throw new ApiException(HttpStatus.FORBIDDEN, "Not allowed to grade this submission.");
+        }
 
         submissionRubricScoreRepository.deleteBySubmission(submission);
         List<RubricScoreDto> scoreDtos = new ArrayList<>();
@@ -98,6 +117,12 @@ public class SubmissionService {
             for (GradeSubmissionRequest.RubricGradeItem item : request.getRubricScores()) {
                 RubricCriteria rubric = rubricCriteriaRepository.findById(item.getRubricId())
                         .orElseThrow(() -> new ApiException(HttpStatus.BAD_REQUEST, "Rubric not found: " + item.getRubricId()));
+                if (!rubric.getAssignment().getId().equals(assignment.getId())) {
+                    throw new ApiException(HttpStatus.BAD_REQUEST, "Rubric does not belong to this assignment.");
+                }
+                if (item.getAwardedMarks() < 0 || item.getAwardedMarks() > rubric.getMaxMarks()) {
+                    throw new ApiException(HttpStatus.BAD_REQUEST, "Rubric marks out of range for: " + rubric.getCriteriaName());
+                }
                 submissionRubricScoreRepository.save(SubmissionRubricScore.builder()
                         .submission(submission)
                         .rubricCriteria(rubric)
@@ -164,5 +189,19 @@ public class SubmissionService {
                 .latePenaltyApplied(submission.getLatePenaltyApplied())
                 .rubricScores(rubricScores)
                 .build();
+    }
+
+    public Submission findByFilePathForAuthorizedUser(String filePath) {
+        User actor = currentUserService.getCurrentUser();
+        Submission submission = submissionRepository.findByFileUrl(filePath)
+                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "File not found."));
+        boolean allowed = actor.getRole() == Role.ROLE_SUPER_ADMIN
+                || actor.getRole() == Role.ROLE_TA
+                || submission.getStudent().getId().equals(actor.getId())
+                || submission.getAssignment().getCreatedBy().getId().equals(actor.getId());
+        if (!allowed) {
+            throw new ApiException(HttpStatus.FORBIDDEN, "You are not allowed to access this file.");
+        }
+        return submission;
     }
 }

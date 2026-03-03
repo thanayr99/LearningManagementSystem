@@ -15,9 +15,17 @@ const ProfilePage = () => {
   });
 
   const [saved, setSaved] = useState(false);
+  const [error, setError] = useState("");
+  const passwordPolicy =
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,64}$/;
 
   const onSubmit = async (e) => {
     e.preventDefault();
+    setError("");
+    if (!passwordPolicy.test(form.password)) {
+      setError("Password must be 8-64 chars and include upper, lower, number, and special character.");
+      return;
+    }
     try {
       await updateProfile(currentUser.id, form);
       await refreshCurrentUser();
@@ -25,6 +33,7 @@ const ProfilePage = () => {
       setTimeout(() => setSaved(false), 2000);
     } catch {
       setSaved(false);
+      setError("Failed to update profile.");
     }
   };
 
@@ -44,6 +53,7 @@ const ProfilePage = () => {
         <form onSubmit={onSubmit} className="card max-w-xl">
           <h1 className="text-xl font-semibold">My Profile</h1>
           {saved ? <p className="mt-3 rounded bg-emerald-50 p-2 text-sm text-emerald-700">Profile updated.</p> : null}
+          {error ? <p className="mt-3 rounded bg-red-50 p-2 text-sm text-red-700">{error}</p> : null}
           <div className="mt-4">
             <label className="label">Name</label>
             <input className="input" value={form.name} onChange={(e) => setForm((s) => ({ ...s, name: e.target.value }))} />
@@ -55,6 +65,7 @@ const ProfilePage = () => {
           <div className="mt-3">
             <label className="label">Password</label>
             <input className="input" type="password" value={form.password} onChange={(e) => setForm((s) => ({ ...s, password: e.target.value }))} />
+            <p className="mt-1 text-xs text-slate-500">Use 8+ chars with upper, lower, number, and symbol.</p>
           </div>
           <button className="btn-primary mt-5" type="submit">
             Save Changes

@@ -7,11 +7,13 @@ import com.iawes.backend.dto.user.UserDto;
 import com.iawes.backend.entity.Department;
 import com.iawes.backend.entity.Notification;
 import com.iawes.backend.entity.User;
+import com.iawes.backend.exception.ApiException;
 import com.iawes.backend.mapper.UserMapper;
 import com.iawes.backend.repository.DepartmentRepository;
 import com.iawes.backend.repository.NotificationRepository;
 import com.iawes.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -82,7 +84,12 @@ public class UserService {
     }
 
     public void markNotificationRead(Long id) {
-        Notification n = notificationRepository.findById(id).orElseThrow();
+        User me = currentUserService.getCurrentUser();
+        Notification n = notificationRepository.findById(id)
+                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Notification not found."));
+        if (!n.getUser().getId().equals(me.getId())) {
+            throw new ApiException(HttpStatus.FORBIDDEN, "Not allowed.");
+        }
         n.setReadStatus(true);
         notificationRepository.save(n);
     }

@@ -15,4 +15,5 @@ public interface SubmissionRepository extends JpaRepository<Submission, Long> {
     List<Submission> findByAssignmentAndStudentOrderBySubmittedAtDesc(Assignment assignment, User student);
     long countByAssignmentInAndStatusNot(List<Assignment> assignments, SubmissionStatus status);
     Optional<Submission> findTopByAssignmentAndStudentOrderByVersionNumberDesc(Assignment assignment, User student);
+    Optional<Submission> findByFileUrl(String fileUrl);
 }

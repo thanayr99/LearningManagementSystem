@@ -14,10 +14,16 @@ const RegisterPage = () => {
     role: ROLES.STUDENT,
     department: "Computer Science"
   });
+  const passwordPolicy =
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,64}$/;
 
   const onSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    if (!passwordPolicy.test(form.password)) {
+      setError("Password must be 8-64 chars and include upper, lower, number, and special character.");
+      return;
+    }
     try {
       await register(form);
       navigate("/app");
@@ -42,6 +48,7 @@ const RegisterPage = () => {
         <div className="mt-3">
           <label className="label">Password</label>
           <input className="input" type="password" required value={form.password} onChange={(e) => setForm((s) => ({ ...s, password: e.target.value }))} />
+          <p className="mt-1 text-xs text-slate-500">Use 8+ chars with upper, lower, number, and symbol.</p>
         </div>
         <div className="mt-3">
           <label className="label">Role</label>
