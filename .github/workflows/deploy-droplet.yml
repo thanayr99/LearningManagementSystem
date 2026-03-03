@@ -1,0 +1,30 @@
+name: Deploy Backend To Droplet
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "main" ]
+    paths:
+      - "backend/**"
+      - "deploy/**"
+      - ".github/workflows/deploy-droplet.yml"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: ${{ secrets.DROPLET_HOST != '' && secrets.DROPLET_USER != '' && secrets.DROPLET_SSH_KEY != '' }}
+    steps:
+      - name: SSH Deploy
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.DROPLET_HOST }}
+          username: ${{ secrets.DROPLET_USER }}
+          key: ${{ secrets.DROPLET_SSH_KEY }}
+          script: |
+            set -e
+            if [ ! -d "$HOME/LearningManagementSystem/.git" ]; then
+              git clone https://github.com/thanayr99/LearningManagementSystem.git "$HOME/LearningManagementSystem"
+            fi
+            cd "$HOME/LearningManagementSystem"
+            git pull
+            docker compose -f deploy/docker-compose.prod.yml --env-file deploy/.env up -d --build
