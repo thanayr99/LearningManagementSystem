@@ -38,28 +38,29 @@ const CreateAssignmentPage = () => {
     setForm((s) => ({ ...s, rubric: s.rubric.filter((_, i) => i !== index) }));
   };
 
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
-    upsertAssignment(
-      {
+    try {
+      await upsertAssignment({
         ...form,
         maxMarks: Number(form.maxMarks),
-        deadline: new Date(form.deadline).toISOString(),
+        deadline: form.deadline,
         rubric: form.rubric.map((r) => ({ ...r, maxMarks: Number(r.maxMarks) }))
-      },
-      currentUser.id
-    );
-    setMessage("Assignment saved.");
-    setForm({
-      title: "",
-      description: "",
-      subject: "",
-      deadline: "",
-      maxMarks: 100,
-      status: ASSIGNMENT_STATUS.DRAFT,
-      rubric: [{ id: "new1", criteriaName: "", maxMarks: 0 }],
-      referenceFiles: []
-    });
+      });
+      setMessage("Assignment saved.");
+      setForm({
+        title: "",
+        description: "",
+        subject: "",
+        deadline: "",
+        maxMarks: 100,
+        status: ASSIGNMENT_STATUS.DRAFT,
+        rubric: [{ id: "new1", criteriaName: "", maxMarks: 0 }],
+        referenceFiles: []
+      });
+    } catch (err) {
+      setMessage(err?.response?.data?.message || "Failed to save assignment.");
+    }
   };
 
   return (
@@ -133,11 +134,11 @@ const CreateAssignmentPage = () => {
                 </div>
                 <div className="flex gap-2">
                   {a.status !== ASSIGNMENT_STATUS.PUBLISHED && (
-                    <button className="btn-secondary" onClick={() => publishAssignment(a.id)}>
+                    <button className="btn-secondary" onClick={async () => await publishAssignment(a.id)}>
                       Publish
                     </button>
                   )}
-                  <button className="btn-secondary" onClick={() => deleteAssignment(a.id)}>
+                  <button className="btn-secondary" onClick={async () => await deleteAssignment(a.id)}>
                     Delete
                   </button>
                 </div>

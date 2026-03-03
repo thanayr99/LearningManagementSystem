@@ -15,14 +15,14 @@ const RegisterPage = () => {
     department: "Computer Science"
   });
 
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
     setError("");
     try {
-      register(form);
+      await register(form);
       navigate("/app");
     } catch (err) {
-      setError(err.message);
+      setError(err?.response?.data?.message || err.message);
     }
   };
 

@@ -6,9 +6,9 @@ const ManageDepartmentsPage = () => {
   const { departments, addDepartment } = useData();
   const [name, setName] = useState("");
 
-  const onAdd = (e) => {
+  const onAdd = async (e) => {
     e.preventDefault();
-    addDepartment(name);
+    await addDepartment(name);
     setName("");
   };
 

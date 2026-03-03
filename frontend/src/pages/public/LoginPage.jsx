@@ -16,14 +16,14 @@ const LoginPage = () => {
   const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
 
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
     setError("");
     try {
-      const user = login(form.email, form.password);
+      const user = await login(form.email, form.password);
       navigate(routeByRole[user.role] || "/");
     } catch (err) {
-      setError(err.message);
+      setError(err?.response?.data?.message || err.message);
     }
   };
 

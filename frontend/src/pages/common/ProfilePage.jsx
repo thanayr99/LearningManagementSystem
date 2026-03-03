@@ -16,12 +16,16 @@ const ProfilePage = () => {
 
   const [saved, setSaved] = useState(false);
 
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
-    updateProfile(currentUser.id, form);
-    refreshCurrentUser();
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
+    try {
+      await updateProfile(currentUser.id, form);
+      await refreshCurrentUser();
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+    } catch {
+      setSaved(false);
+    }
   };
 
   const onResetDemoData = () => {

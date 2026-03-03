@@ -1,12 +1,23 @@
+import { useEffect, useState } from "react";
 import Layout from "../../components/Layout";
 import StatCard from "../../components/StatCard";
-import { useAuth } from "../../context/AuthContext";
 import { useData } from "../../context/DataContext";
 
 const TeacherDashboard = () => {
-  const { currentUser } = useAuth();
   const { getTeacherAnalytics } = useData();
-  const analytics = getTeacherAnalytics(currentUser.id);
+  const [analytics, setAnalytics] = useState({
+    totalAssignments: 0,
+    pendingGrading: 0,
+    atRiskStudents: []
+  });
+
+  useEffect(() => {
+    const load = async () => {
+      const data = await getTeacherAnalytics();
+      setAnalytics(data || { totalAssignments: 0, pendingGrading: 0, atRiskStudents: [] });
+    };
+    load();
+  }, []);
 
   return (
     <Layout>

@@ -1,11 +1,9 @@
 import { useMemo, useState } from "react";
 import Layout from "../../components/Layout";
-import { useAuth } from "../../context/AuthContext";
 import { useData } from "../../context/DataContext";
 import { ASSIGNMENT_STATUS } from "../../utils/constants";
 
 const SubmitAssignmentPage = () => {
-  const { currentUser } = useAuth();
   const { assignments, submitAssignment } = useData();
   const published = useMemo(
     () => assignments.filter((a) => a.status === ASSIGNMENT_STATUS.PUBLISHED),
@@ -42,7 +40,7 @@ const SubmitAssignmentPage = () => {
     }
   };
 
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setMessage("");
@@ -51,13 +49,10 @@ const SubmitAssignmentPage = () => {
       return;
     }
     try {
-      const submission = submitAssignment({
+      const submission = await submitAssignment({
         assignmentId: form.assignmentId,
-        studentId: currentUser.id,
-        fileName: form.fileName,
-        content: form.content,
-        fileType: selectedFile.type,
-        fileSize: selectedFile.size
+        file: selectedFile,
+        content: form.content
       });
       const flagged = submission.similarityScore > 60 ? " Potential plagiarism flagged." : "";
       setMessage(
@@ -66,7 +61,7 @@ const SubmitAssignmentPage = () => {
       setForm({ assignmentId: "", fileName: "", content: "" });
       setSelectedFile(null);
     } catch (err) {
-      setError(err.message);
+      setError(err?.response?.data?.message || err.message);
     }
   };
 

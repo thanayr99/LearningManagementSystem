@@ -44,17 +44,17 @@ const GradeSubmissionPage = () => {
 
   const getBase = () => rubricScores.reduce((sum, r) => sum + Number(r.awardedMarks || 0), 0);
 
-  const runAi = () => {
+  const runAi = async () => {
     if (!selectedSubmission || !selectedAssignment) return;
-    const result = aiSuggestion(selectedSubmission.contentText || "", selectedAssignment.maxMarks);
+    const result = await aiSuggestion(selectedSubmission.contentText || "", selectedAssignment.maxMarks);
     setSuggestion(result);
     setApprovedMarks(result.suggestedMarks);
     setFeedbackText(result.suggestedFeedback);
   };
 
-  const onGrade = () => {
+  const onGrade = async () => {
     if (!selectedSubmission) return;
-    gradeSubmission({
+    await gradeSubmission({
       submissionId: selectedSubmission.id,
       graderId: currentUser.id,
       rubricScores,

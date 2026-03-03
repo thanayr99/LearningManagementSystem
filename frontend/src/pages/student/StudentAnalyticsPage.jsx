@@ -1,13 +1,25 @@
+import { useEffect, useState } from "react";
 import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import Layout from "../../components/Layout";
 import StatCard from "../../components/StatCard";
-import { useAuth } from "../../context/AuthContext";
 import { useData } from "../../context/DataContext";
 
 const StudentAnalyticsPage = () => {
-  const { currentUser } = useAuth();
   const { getStudentAnalytics } = useData();
-  const analytics = getStudentAnalytics(currentUser.id);
+  const [analytics, setAnalytics] = useState({
+    trend: [],
+    lateCount: 0,
+    strengths: [],
+    weaknesses: []
+  });
+
+  useEffect(() => {
+    const load = async () => {
+      const data = await getStudentAnalytics();
+      setAnalytics(data || { trend: [], lateCount: 0, strengths: [], weaknesses: [] });
+    };
+    load();
+  }, []);
 
   return (
     <Layout>

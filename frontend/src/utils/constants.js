@@ -23,7 +23,8 @@ export const LOCAL_KEYS = {
   SUBMISSIONS: "iawes_submissions",
   NOTIFICATIONS: "iawes_notifications",
   AUDIT_LOGS: "iawes_audit_logs",
-  CURRENT_USER: "iawes_current_user"
+  CURRENT_USER: "iawes_current_user",
+  TOKEN: "iawes_token"
 };
 
 const now = new Date();
